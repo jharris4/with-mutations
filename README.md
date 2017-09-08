@@ -34,6 +34,8 @@ console.log(result === newValue); // false
 Mutating two different values with some overlap:
 
 ```javascript
+import getWithMutations from 'with-mutations';
+
 const oldValue = [ { a: 1 }, { b: 1 } ];
 const newValue = [ { a: 1 }, { b: 2 } ];
 const result = getWithMutations(oldValue, newValue);
@@ -61,6 +63,8 @@ Note that the custom mutator is only executed if all of the following are true:
 - The values are not both arrays or objects
 
 ```javascript
+import getWithMutations from 'with-mutations';
+
 const oldValue = () => { };
 const newValue = () => { };
 oldValue.prop = 'a';
