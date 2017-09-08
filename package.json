@@ -1,0 +1,40 @@
+{
+  "name": "with-mutations",
+  "version": "1.0.0",
+  "description": "a lightweight function for treating simple javascript variables as immutable",
+  "keywords": [
+    "javascript",
+    "mutation",
+    "immutable"
+  ],
+  "repository": "/jharris4/with-mutations",
+  "license": "MIT",
+  "author": "jharris4",
+  "main": "lib/index.js",
+  "jsnext:main": "lib/index.js",
+  "module": "lib/index.js",
+  "scripts": {
+    "clean": "rimraf lib",
+    "build": "npm run clean && babel src/ --out-dir lib",
+    "test": "jest"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "jest": {
+    "testMatch": [
+      "<rootDir>/test/*.js"
+    ]
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-jest": "^21.0.2",
+    "babel-preset-es2015": "^6.24.1",
+    "jest": "^21.0.2",
+    "regenerator-runtime": "^0.11.0",
+    "rimraf": "^2.6.1"
+  }
+}
