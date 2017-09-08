@@ -1,6 +1,6 @@
 {
   "name": "with-mutations",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "a lightweight function for treating simple javascript variables as immutable",
   "keywords": [
     "javascript",
