@@ -106,6 +106,40 @@ describe('nested values', () => {
     expect(withMutations[0]).toBe(oldNestedA);
     expect(withMutations[1]).toBe(newNestedB);
   });
+
+  test('uses old object property values when they are the same, or new object property values when they are added', () => {
+    const newNestedA = { a: 1 };
+    const oldNestedA = { a: 1 };
+    const newNestedB = "abc";
+    const oldNestedB = "xyz";
+    const newNestedC = { b: 2 };
+    const oldValue = { nestedA: oldNestedA, nestedB: oldNestedB };
+    const newValue = { nestedA: newNestedA, nestedB: newNestedB, nestedC: newNestedC };
+
+    const withMutations = getWithMutations(oldValue, newValue);
+
+    expect(withMutations).not.toBe(newValue);
+    expect(withMutations.nestedA).toBe(oldNestedA);
+    expect(withMutations.nestedB).toBe(newNestedB);
+    expect(withMutations.nestedC).toBe(newNestedC);
+  });
+
+  test('uses old array values when they are the same, or new arra values when they are added', () => {
+    const newNestedA = { a: 1 };
+    const oldNestedA = { a: 1 };
+    const newNestedB = "abc";
+    const oldNestedB = "xyz";
+    const newNestedC = { b: 2 };
+    const oldValue = [oldNestedA, oldNestedB];
+    const newValue = [newNestedA, newNestedB, newNestedC];
+
+    const withMutations = getWithMutations(oldValue, newValue);
+
+    expect(withMutations).not.toBe(newValue);
+    expect(withMutations[0]).toBe(oldNestedA);
+    expect(withMutations[1]).toBe(newNestedB);
+    expect(withMutations[2]).toBe(newNestedC);
+  });
 });
 
 describe('function values', () => {
