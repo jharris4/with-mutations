@@ -6,6 +6,7 @@ This package provides a `getWithMutations(oldValue, newValue)` function that ret
 
 It operates recursively on objects or arrays, preserving nested value equality whenever possible.
 
+
 Installation
 ------------
 Install the plugin with npm:
@@ -74,4 +75,94 @@ const result = getWithMutations(oldValue, newValue, customMutator)
 
 console.log(result === oldValue); // true
 console.log(result === newValue); // false
+```
+
+
+React and shouldComponentUpdate
+-----------
+
+The motivation for this package was to provide the benefits of immutability when developing components with Facebook's [React package](https://github.com/facebook/react) without the overhead of a full immutable library such as Facebook's [Immutable package](https://github.com/facebook/immutable-js).
+
+React provides a [PureComponent](https://facebook.github.io/react/docs/react-api.html#react.purecomponent) class that implements a Component that only updates a component when one of its props has changed based on a shallow equality check.
+
+This means that the Component will re-render whenever any one of its props is no longer identical (`oldProp !== newProp`)
+
+This package can help make this easier, as shown in the following example:
+
+```javascript
+import getWithMutations from 'with-mutations';
+import React, { PureComponent, Component } from 'react';
+import { render } from 'react-dom';
+
+import PropTypes from 'prop-types';
+
+class MyPureComponent extends PureComponent {
+  static propTypes = {
+    myProp: PropTypes.arrayOf(PropTypes.object).isRequired
+  };
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    // rendering will only occur if myProp has changed (oldProps.myProp !== newProps.myProp)
+    const { myProp } = this.props;
+
+    return (
+      <div>
+        {myProp.map((anObject, i) => (
+          <div key={i}>{anObject.value}</div>
+        ))};
+      </div>
+    );
+  }
+}
+
+class MyParentComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.intervalId = null;
+    this.state = { data: generateData() };
+  }
+
+  componentDidMount() {
+    // start a timer to change the data every 5 seconds
+    this.intervalId = setInterval(() => {
+      const oldData = this.state.data; // get the old data
+      const newData = generateData(); // create new data
+      
+      // same object reference will be returned if old data is functionally equal to the new data
+      const data = getWithMutations(oldData, newData);
+
+      this.setState({ data });
+    }, 5000);
+  }
+
+  componentWillUnmount() {
+    if (this.intervalId !== null) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
+  }
+
+  render() {
+    const { data } = this.state;
+    return (
+      <MyPureComponent myProp={data}/>
+    )
+  }
+}
+
+function generateData() {
+  // generate an array containing 10 objects...
+  const data = [];
+  for (let i=0; i<10; i++) {
+    data.push({ value: i });
+  }
+  return data;
+}
+
+render(<MyParentComponent/>, document.getElementById('root'));
+
 ```
