@@ -8,8 +8,6 @@ It operates recursively on objects or arrays, preserving nested value equality w
 
 Installation
 ------------
-This package uses `Array.every` and as such, using a polyfill such as the `babel-polyfill` package is recommended.
-
 Install the plugin with npm:
 ```shell
 $ npm install --save with-mutations
