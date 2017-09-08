@@ -3,33 +3,48 @@ export default function getWithMutations(oldValue, newValue, customMutator) {
     return newValue;
   }
   else if (Array.isArray(oldValue) && Array.isArray(newValue)) {
-    if (oldValue.length === newValue.length) {
-      let newArray = oldValue.map((v, i) => getWithMutations(v, newValue[i], customMutator));
-      if (oldValue.some((v, i) => v !== newArray[i])) {
-        return newArray;
-      }
-      else {
-        return oldValue;
+    const newLength = newValue.length;
+    let newArray = [];
+    let different = false;
+    let result;
+    for (let i = 0; i < newLength; i++) {
+      result = getWithMutations(oldValue[i], newValue[i], customMutator);
+      newArray.push(result);
+      if (result !== oldValue[i]) {
+        different = true;
       }
     }
+    if (oldValue.length === newValue.length && !different) {
+       return oldValue;
+    }
     else {
-      return newValue;
+      return newArray;
     }
   }
   else if (typeof oldValue === "object" && typeof newValue === "object") {
     let oldKeys = Object.keys(oldValue);
     let newKeys = Object.keys(newValue);
+    const newKeyLength = newKeys.length;
     let oldKeyMap = oldKeys.reduce((map, key) => { map[key] = true; return map }, {});
     let newObject = {};
-    for (let newKey of newKeys) {
+    let different = false;
+    let newKey;
+    let result;
+    for (let i=0; i<newKeyLength; i++) {
+      newKey = newKeys[i];
       if (oldKeyMap[newKey]) {
-        newObject[newKey] = getWithMutations(oldValue[newKey], newValue[newKey], customMutator);
+        result = getWithMutations(oldValue[newKey], newValue[newKey], customMutator);
+        newObject[newKey] = result;
+        if (result !== oldValue[newKey]) {
+          different = true;
+        }
       }
       else {
+        different = true;
         newObject[newKey] = newValue[newKey];
       }
     }
-    if (oldKeys.length === newKeys.length && newKeys.every(newKey => oldKeyMap[newKey]) && oldKeys.every(oldKey => newObject[oldKey] === oldValue[oldKey])) {
+    if (oldKeys.length === newKeys.length && !different) {
       return oldValue;
     }
     else {
